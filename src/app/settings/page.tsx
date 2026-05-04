@@ -137,25 +137,50 @@ const SettingsPage = () => {
 
               {/* Geo-fencing Settings */}
               <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-8">
-                 <div className="flex items-center justify-between pb-6 border-b border-gray-50">
+                  <div className="flex items-center justify-between pb-6 border-b border-gray-50">
                     <div className="flex items-center gap-3">
                        <MapPin className="w-6 h-6 text-indigo-600 font-extrabold" />
                        <h3 className="text-xl font-black text-gray-900 tracking-tighter">Geo-Fence Configuration</h3>
                     </div>
-                    <div className="flex items-center gap-2">
-                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{settings.geoFence.enabled ? 'Active' : 'Disabled'}</span>
-                       <button 
-                         onClick={() => setSettings({...settings, geoFence: {...settings.geoFence, enabled: !settings.geoFence.enabled}})}
-                         className={cn(
-                           "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2",
-                           settings.geoFence.enabled ? "bg-indigo-600" : "bg-gray-200"
-                         )}
+                    <div className="flex items-center gap-4">
+                       <button
+                         onClick={() => {
+                           if (!navigator.geolocation) {
+                             alert("Geolocation is not supported by your browser");
+                             return;
+                           }
+                           navigator.geolocation.getCurrentPosition((position) => {
+                             setSettings({
+                               ...settings,
+                               geoFence: {
+                                 ...settings.geoFence,
+                                 latitude: parseFloat(position.coords.latitude.toFixed(6)),
+                                 longitude: parseFloat(position.coords.longitude.toFixed(6))
+                               }
+                             });
+                           }, (error) => {
+                             alert("Please enable location access to detect campus coordinates.");
+                           });
+                         }}
+                         className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-2"
                        >
-                         <span className={cn(
-                           "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
-                           settings.geoFence.enabled ? "translate-x-6" : "translate-x-1"
-                         )} />
+                         <Globe className="w-3.5 h-3.5" /> Detect My Location
                        </button>
+                       <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{settings.geoFence.enabled ? 'Active' : 'Disabled'}</span>
+                          <button 
+                            onClick={() => setSettings({...settings, geoFence: {...settings.geoFence, enabled: !settings.geoFence.enabled}})}
+                            className={cn(
+                              "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2",
+                              settings.geoFence.enabled ? "bg-indigo-600" : "bg-gray-200"
+                            )}
+                          >
+                            <span className={cn(
+                              "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                              settings.geoFence.enabled ? "translate-x-6" : "translate-x-1"
+                            )} />
+                          </button>
+                       </div>
                     </div>
                  </div>
                  
