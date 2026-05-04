@@ -9,7 +9,8 @@ import {
   Plus, 
   Navigation,
   CheckCircle,
-  Users
+  Users,
+  ChevronRight
 } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
 import api from '@/lib/api';

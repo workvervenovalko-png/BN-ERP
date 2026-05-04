@@ -24,7 +24,7 @@ import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import BulkUploadModal from '@/components/BulkUploadModal';
 
-const TeachersPage = () => {
+const TeachersContent = () => {
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const action = searchParams.get('action');
@@ -127,151 +127,149 @@ const TeachersPage = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <div>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight leading-none">Teacher Management</h1>
-            <p className="text-sm text-gray-500 font-bold mt-2 uppercase tracking-widest">Managing academic faculty members</p>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight leading-none">Teacher Management</h1>
+          <p className="text-sm text-gray-500 font-bold mt-2 uppercase tracking-widest">Managing academic faculty members</p>
+        </div>
+        {user?.role === 'admin' && (
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setIsBulkModalOpen(true)}
+              className="px-6 py-4 bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 font-black text-xs uppercase tracking-widest rounded-2xl transition-all flex items-center gap-2 group"
+            >
+              <Upload className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              Bulk Upload
+            </button>
+            <button 
+              onClick={() => handleOpenModal()}
+              className="px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-100 transition-all flex items-center gap-2 group"
+            >
+              <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              Onboard Faculty
+            </button>
           </div>
-          {user?.role === 'admin' && (
-            <div className="flex gap-3">
-              <button 
-                onClick={() => setIsBulkModalOpen(true)}
-                className="px-6 py-4 bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 font-black text-xs uppercase tracking-widest rounded-2xl transition-all flex items-center gap-2 group"
-              >
-                <Upload className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                Bulk Upload
-              </button>
-              <button 
-                onClick={() => handleOpenModal()}
-                className="px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-100 transition-all flex items-center gap-2 group"
-              >
-                <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                Onboard Faculty
-              </button>
-            </div>
-          )}
+        )}
+      </div>
+
+      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
+        <div className="p-6 border-b border-gray-50 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 font-black" />
+            <input 
+              type="text" 
+              placeholder="Search by name, dept, email..." 
+              className="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-indigo-50 transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-2">
+            <button className="p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all"><Filter className="w-5 h-5" /></button>
+          </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
-          <div className="p-6 border-b border-gray-50 flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 font-black" />
-              <input 
-                type="text" 
-                placeholder="Search by name, dept, email..." 
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-indigo-50 transition-all"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-2">
-              <button className="p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all"><Filter className="w-5 h-5" /></button>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50/50">
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Faculty Info</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Department</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Assigned Subjects</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Avg Attendance</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Contact</th>
-                  <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Actions</th>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-50/50">
+                <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Faculty Info</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Department</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Assigned Subjects</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Avg Attendance</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Contact</th>
+                <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {loading ? (
+                Array(3).fill(0).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={5} className="px-8 py-10"><div className="h-8 bg-gray-100 rounded-lg w-full"></div></td>
+                  </tr>
+                ))
+              ) : teachers.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-8 py-20 text-center">
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">No faculty records found</p>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {loading ? (
-                  Array(3).fill(0).map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="px-8 py-10"><div className="h-8 bg-gray-100 rounded-lg w-full"></div></td>
-                    </tr>
-                  ))
-                ) : teachers.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-8 py-20 text-center">
-                      <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">No faculty records found</p>
-                    </td>
-                  </tr>
-                ) : teachers.map((teacher) => (
-                  <tr key={teacher._id} className="hover:bg-indigo-50/10 transition-colors group">
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-[1.25rem] bg-indigo-50 flex items-center justify-center font-black text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
-                           {teacher.name.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="text-base font-black text-gray-900 leading-none tracking-tight">{teacher.name}</p>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase mt-1 tracking-widest">{teacher.email}</p>
-                        </div>
+              ) : teachers.map((teacher) => (
+                <tr key={teacher._id} className="hover:bg-indigo-50/10 transition-colors group">
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-[1.25rem] bg-indigo-50 flex items-center justify-center font-black text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
+                         {teacher.name.charAt(0)}
                       </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl uppercase tracking-widest">{teacher.department || 'GENERAL'}</span>
-                    </td>
-                    <td className="px-8 py-6 max-w-[200px]">
-                      <div className="flex flex-wrap gap-1">
-                         {teacher.subjects?.length > 0 ? teacher.subjects.map((s: any) => (
-                            <span key={s._id} className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">{s.name}</span>
-                         )) : <span className="text-[10px] text-gray-400 font-bold italic">No subjects assigned</span>}
+                      <div>
+                        <p className="text-base font-black text-gray-900 leading-none tracking-tight">{teacher.name}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase mt-1 tracking-widest">{teacher.email}</p>
                       </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]" />
-                        <span className="text-sm font-black text-indigo-600 tracking-tighter">
-                          {teacher.attendance}%
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <p className="text-sm font-black text-gray-700">{teacher.phone || 'N/A'}</p>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl uppercase tracking-widest">{teacher.department || 'GENERAL'}</span>
+                  </td>
+                  <td className="px-8 py-6 max-w-[200px]">
+                    <div className="flex flex-wrap gap-1">
+                       {teacher.subjects?.length > 0 ? teacher.subjects.map((s: any) => (
+                          <span key={s._id} className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">{s.name}</span>
+                       )) : <span className="text-[10px] text-gray-400 font-bold italic">No subjects assigned</span>}
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]" />
+                      <span className="text-sm font-black text-indigo-600 tracking-tighter">
+                        {teacher.attendance}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-gray-700">{teacher.phone || 'N/A'}</p>
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => handleOpenModal(teacher)}
+                        className="p-2.5 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      {user?.role === 'admin' && (
                         <button 
-                          onClick={() => handleOpenModal(teacher)}
-                          className="p-2.5 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                          onClick={() => handleDelete(teacher._id)}
+                          className="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
-                        {user?.role === 'admin' && (
-                          <button 
-                            onClick={() => handleDelete(teacher._id)}
-                            className="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-          <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-50 flex items-center justify-between">
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page {page} of {totalPages}</p>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setPage(p => Math.max(1, p-1))}
-                disabled={page === 1}
-                className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-indigo-50 disabled:opacity-50 transition-all shadow-sm"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
-              </button>
-              <button 
-                onClick={() => setPage(p => Math.min(totalPages, p+1))}
-                disabled={page === totalPages}
-                className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-indigo-50 disabled:opacity-50 transition-all shadow-sm"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
+        <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-50 flex items-center justify-between">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page {page} of {totalPages}</p>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setPage(p => Math.max(1, p-1))}
+              disabled={page === 1}
+              className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-indigo-50 disabled:opacity-50 transition-all shadow-sm"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <button 
+              onClick={() => setPage(p => Math.min(totalPages, p+1))}
+              disabled={page === totalPages}
+              className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-indigo-50 disabled:opacity-50 transition-all shadow-sm"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
           </div>
         </div>
       </div>
@@ -391,6 +389,20 @@ const TeachersPage = () => {
         role="teacher"
         onSuccess={fetchTeachers}
       />
+    </div>
+  );
+};
+
+const TeachersPage = () => {
+  return (
+    <DashboardLayout>
+      <React.Suspense fallback={
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+      }>
+        <TeachersContent />
+      </React.Suspense>
     </DashboardLayout>
   );
 };

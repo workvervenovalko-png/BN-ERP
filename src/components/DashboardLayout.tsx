@@ -35,7 +35,13 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
           <main className="p-10 flex-grow animate-in fade-in duration-700">
-            {children}
+            <React.Suspense fallback={
+              <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              </div>
+            }>
+              {children}
+            </React.Suspense>
           </main>
 
           <footer className="px-10 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest flex flex-col md:flex-row justify-between items-center bg-white/50 backdrop-blur-sm border-t border-gray-100 gap-4">
